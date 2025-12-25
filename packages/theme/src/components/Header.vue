@@ -13,15 +13,8 @@
             v-if="userStore.user.userId"
           />
           <div v-else class="flex items-center">
-            <Button type="primary" href="/login" size="small"> Login </Button>
-            <Button
-              v-if="settingsStore.get.allowSignup"
-              type="primary"
-              :outline="true"
-              href="/join"
-              size="small"
-            >
-              Create an account
+            <Button type="primary" href="/boards" size="small">
+              Submit Feedback
             </Button>
           </div>
         </nav>

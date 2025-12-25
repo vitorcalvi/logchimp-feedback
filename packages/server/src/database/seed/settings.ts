@@ -8,11 +8,12 @@ export async function seed(knex) {
   await knex("settings").insert([
     {
       title: "Dyagnosys Feedback",
-      description: "Track user feedback to build better products",
+      description: "Share your ideas and help us build better products",
       accentColor: "484d7c",
       logo: "https://www.dyagnosys.com/logo.webp",
       icon: "https://www.dyagnosys.com/logo.webp",
       isPoweredBy: false,
+      allowSignup: false,
     },
   ]);
 }

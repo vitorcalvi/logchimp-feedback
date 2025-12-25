@@ -11,7 +11,7 @@
     </main>
     <aside class="flex-1 h-full mb-6 lg:mb-0 grid grid-cols-1 gap-y-4 lg:sticky lg:top-20">
       <site-setup-card v-if="showSiteSetupCard" />
-      <login-card v-if="!userStore.getUserId && !showSiteSetupCard" />
+      <public-feedback-card v-if="!showSiteSetupCard" />
       <top-public-boards-list />
     </aside>
   </div>
@@ -34,7 +34,7 @@ import InfiniteScroll, {
 } from "../components/ui/InfiniteScroll.vue";
 import PostItem from "../components/post/PostItem.vue";
 import SiteSetupCard from "../components/site/SiteSetupCard.vue";
-import LoginCard from "../components/auth/LoginCard.vue";
+import PublicFeedbackCard from "../components/auth/PublicFeedbackCard.vue";
 import TopPublicBoardsList from "../ee/components/TopPublicBoardsList.vue";
 
 const settingsStore = useSettingStore();

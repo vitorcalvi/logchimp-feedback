@@ -5,13 +5,8 @@ import { v4 as uuidv4 } from "uuid";
  * @returns { Promise<void> }
  */
 export async function seed(knex) {
-  // Check if boards already exist to prevent duplicates
-  const existingBoards = await knex("boards").count("* as count").first();
-
-  if (existingBoards && Number(existingBoards.count) > 0) {
-    console.log("Boards already exist, skipping seed");
-    return;
-  }
+  // Delete existing boards and insert fresh data
+  await knex("boards").del();
 
   await knex("boards").insert([
     {
