@@ -97,13 +97,16 @@ services:
     build:
       dockerfile: ./packages/theme/Dockerfile
       context: .
+      args:
+        VITE_API_URL: "https://api.dyagnosys.com"
+        VITE_IS_SELF_HOSTED: "true"
     restart: unless-stopped
     depends_on:
       - api
     environment:
       NODE_ENV: production
       PORT: ${THEME_PORT:-3000}
-      VITE_API_URL: ${LOGCHIMP_API_URL:-https://feedback.dyagnosys.com}
+      VITE_API_URL: "https://api.dyagnosys.com"
       VITE_IS_SELF_HOSTED: "true"
     ports:
       - "${THEME_PORT:-3000}:${THEME_PORT:-3000}"
