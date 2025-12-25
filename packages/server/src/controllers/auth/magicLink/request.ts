@@ -4,6 +4,7 @@ import type {
   IMagicLinkRequestResponseBody,
   IApiErrorResponse,
 } from "@logchimp/types";
+import { v4 as uuidv4 } from "uuid";
 
 // services
 import { generateMagicLink } from "../../../services/auth/magicLink";
@@ -59,6 +60,7 @@ export async function request(
       email: email.toLowerCase(),
       boardId: validBoardId,
       type: "magicLink",
+      jti: uuidv4(),
     };
 
     const magicLink = await generateMagicLink(tokenPayload);

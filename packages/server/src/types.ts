@@ -35,6 +35,7 @@ export interface IMagicLinkJwtPayload {
   email: string;
   boardId: string;
   type: "magicLink";
+  jti: string; // JWT ID for uniqueness
 }
 
 export interface IMagicLinkSessionJwtPayload {
