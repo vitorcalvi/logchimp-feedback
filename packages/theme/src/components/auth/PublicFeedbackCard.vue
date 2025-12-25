@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { requestMagicLink } from "../../modules/auth";
-import { getPublicBoards } from "../../modules/boards";
+import { getPublicBoards } from "../../ee/modules/boards";
 import type { IBoard } from "@logchimp/types";
 
 // components
