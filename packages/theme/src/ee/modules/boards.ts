@@ -29,7 +29,7 @@ export const getPublicBoards = async ({
   page = "1",
   limit = "10",
   created = "DESC",
-}: TFilterBoardRequestQuery): Promise<
+}: TFilterBoardRequestQuery = {}): Promise<
   AxiosResponse<IFilterBoardResponseBody>
 > => {
   return await axios({
