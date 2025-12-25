@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.root">
-    <img :class="$style.logo" src="/dyagnosys-logo.webp" alt="Dyagnosys Feedback" />
+    <img :class="$style.logo" src="https://www.dyagnosys.com/logo.webp" alt="Dyagnosys Feedback" />
     <div :class="$style.pulse" />
   </div>
 </template>

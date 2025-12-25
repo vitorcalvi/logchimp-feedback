@@ -9,6 +9,7 @@ import type {
 } from "@logchimp/types";
 
 import database from "../../database";
+import { notifyNewPost } from "../../services/notifications";
 
 // utils
 import { validUUID, generateNanoID as nanoid } from "../../helpers";
@@ -75,6 +76,26 @@ export async function create(
         postId: post.postId,
       })
       .into("votes");
+
+    // Send notification (async, non-blocking)
+    const board = await database
+      .select("name")
+      .from("boards")
+      .where({ boardId })
+      .first();
+
+    const user = await database
+      .select("email")
+      .from("users")
+      .where({ userId })
+      .first();
+
+    notifyNewPost({
+      postTitle: title,
+      postSlug: post.slug,
+      boardName: board?.name || "Unknown Board",
+      userEmail: user?.email || "Unknown",
+    }).catch((err) => logger.error("Notification failed:", err));
 
     res.status(201).send({
       post,

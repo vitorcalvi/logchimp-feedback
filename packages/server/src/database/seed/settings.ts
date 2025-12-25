@@ -10,8 +10,8 @@ export async function seed(knex) {
       title: "Dyagnosys Feedback",
       description: "Track user feedback to build better products",
       accentColor: "484d7c",
-      logo: "/dyagnosys-logo.webp",
-      icon: "/dyagnosys-logo.webp",
+      logo: "https://www.dyagnosys.com/logo.webp",
+      icon: "https://www.dyagnosys.com/logo.webp",
       isPoweredBy: false,
     },
   ]);

@@ -9,6 +9,7 @@ import type {
 
 import database from "../../database";
 import { markMagicLinkUsed } from "../../services/auth/magicLink";
+import { notifyNewPost } from "../../services/notifications";
 
 // utils
 import {
@@ -135,6 +136,20 @@ export async function createWithMagicLink(
 
     // Mark the magic link as used
     await markMagicLinkUsed(magicLinkId);
+
+    // Send notification (async, non-blocking)
+    const board = await database
+      .select("name")
+      .from("boards")
+      .where({ boardId })
+      .first();
+
+    notifyNewPost({
+      postTitle: title,
+      postSlug: post.slug,
+      boardName: board?.name || "Unknown Board",
+      userEmail: email,
+    }).catch((err) => logger.error("Notification failed:", err));
 
     res.status(201).send({
       post,

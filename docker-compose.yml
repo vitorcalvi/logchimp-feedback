@@ -1,4 +1,4 @@
-name: "LogChimp"
+name: "DyagnosysFeedback"
 
 services:
   cache:
@@ -45,7 +45,7 @@ services:
       LOGCHIMP_IS_SELF_HOSTED: true
       LOGCHIMP_SECRET_KEY: ${LOGCHIMP_SECRET_KEY:-changeme}
       LOGCHIMP_MACHINE_SIGNATURE: ${LOGCHIMP_MACHINE_SIGNATURE:-changeme}
-      LOGCHIMP_WEB_URL: ${LOGCHIMP_WEB_URL:-http://localhost:8080}
+      LOGCHIMP_WEB_URL: ${LOGCHIMP_WEB_URL:-https://feedback.dyagnosys.com}
 
       # Database
       LOGCHIMP_DB_HOST: db
@@ -76,7 +76,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: ${THEME_PORT:-3000}
-      VITE_API_URL: ${LOGCHIMP_API_URL:-http://localhost:8080}
+      VITE_API_URL: ${LOGCHIMP_API_URL:-https://feedback.dyagnosys.com}
       VITE_IS_SELF_HOSTED: true
     ports:
       - "${THEME_PORT:-3000}:${THEME_PORT:-3000}"
