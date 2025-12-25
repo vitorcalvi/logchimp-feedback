@@ -67,7 +67,8 @@ export async function generateMagicLink(
       siteTitle,
     });
 
-    const noReplyEmail = `noreply@${urlObject.hostname}`;
+    // Use configured mailFrom or fall back to noreply@hostname
+    const noReplyEmail = config.mailFrom || `noreply@${urlObject.hostname}`;
 
     await mail.sendMail({
       from: noReplyEmail,

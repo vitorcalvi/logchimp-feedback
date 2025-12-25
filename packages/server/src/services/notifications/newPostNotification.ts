@@ -45,8 +45,11 @@ export async function notifyNewPost(params: NotifyNewPostParams): Promise<void> 
       return;
     }
 
+    // Use configured mailFrom or fall back to noreply@hostname
+    const fromEmail = config.mailFrom || `noreply@${urlObject.hostname}`;
+
     await mail.sendMail({
-      from: `noreply@${urlObject.hostname}`,
+      from: fromEmail,
       to: settings.adminNotificationEmail,
       subject: `[${settings.title}] New feedback: ${params.postTitle}`,
       text: emailContent.text,

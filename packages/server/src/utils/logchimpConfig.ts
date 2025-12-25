@@ -34,6 +34,7 @@ interface Config {
   mailUser: string | undefined;
   mailPassword: string | undefined;
   mailPort: number;
+  mailFrom: string | undefined;
 }
 
 class ConfigManager {
@@ -140,6 +141,7 @@ class ConfigManager {
       mailUser: config.mail?.user,
       mailPassword: config.mail?.password,
       mailPort: mailPort ? Number.parseInt(mailPort, 10) : 465,
+      mailFrom: config.mail?.from,
     };
   }
 
@@ -191,6 +193,7 @@ class ConfigManager {
       mailUser: process.env.LOGCHIMP_MAIL_USER,
       mailPassword: process.env.LOGCHIMP_MAIL_PASSWORD,
       mailPort: mailPort ? Number.parseInt(mailPort, 10) : DEFAULT_MAIL_PORT,
+      mailFrom: process.env.LOGCHIMP_MAIL_FROM,
     };
   }
 
