@@ -53,7 +53,11 @@ router.post(
 );
 
 // magic link
-router.post("/auth/magic-link/request", mailConfigExists, auth.magicLink.request);
+router.post(
+  "/auth/magic-link/request",
+  mailConfigExists,
+  auth.magicLink.request,
+);
 router.post("/auth/magic-link/validate", auth.magicLink.validate);
 
 export default router;

@@ -84,7 +84,6 @@ const activeTab = computed(() => {
   switch (tab.value) {
     case "oldest":
       return OldestPosts;
-    case "latest":
     default:
       return LatestPosts;
   }

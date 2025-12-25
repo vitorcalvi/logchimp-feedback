@@ -1,5 +1,5 @@
 // modules
-import path from "path";
+import path from "node:path";
 import { createLogger, format, transports } from "winston";
 
 const oneLineForamt = format.printf(({ level, code, message, timestamp }) => {

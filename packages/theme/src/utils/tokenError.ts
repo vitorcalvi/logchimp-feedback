@@ -2,7 +2,6 @@ import { useUserStore } from "../store/user";
 import { router } from "../router";
 
 // TODO: Add TS types
-// biome-ignore lint: Add TS types
 const tokenError = (error: any) => {
   const { logout } = useUserStore();
 

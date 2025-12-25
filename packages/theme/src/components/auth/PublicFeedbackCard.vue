@@ -135,7 +135,8 @@ async function sendMagicLink() {
     const axiosError = error as { response?: { data?: { message?: string } } };
     emailError.show = true;
     emailError.message =
-      axiosError.response?.data?.message || "Failed to send link. Please try again.";
+      axiosError.response?.data?.message ||
+      "Failed to send link. Please try again.";
   } finally {
     loading.value = false;
   }

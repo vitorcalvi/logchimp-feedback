@@ -16,7 +16,9 @@ interface NotifyNewPostParams {
   userEmail: string;
 }
 
-export async function notifyNewPost(params: NotifyNewPostParams): Promise<void> {
+export async function notifyNewPost(
+  params: NotifyNewPostParams,
+): Promise<void> {
   try {
     // Get settings
     const settings = await database
@@ -56,7 +58,9 @@ export async function notifyNewPost(params: NotifyNewPostParams): Promise<void> 
       html: emailContent.html,
     });
 
-    logger.info(`Sent new post notification to ${settings.adminNotificationEmail}`);
+    logger.info(
+      `Sent new post notification to ${settings.adminNotificationEmail}`,
+    );
   } catch (err) {
     logger.error("Failed to send new post notification", err);
   }

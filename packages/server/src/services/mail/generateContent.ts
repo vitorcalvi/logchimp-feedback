@@ -1,5 +1,5 @@
 import _ from "lodash";
-import path from "path";
+import path from "node:path";
 import { htmlToText } from "html-to-text";
 
 import logger from "../../utils/logger";

@@ -159,7 +159,8 @@ useHead({
         if (icon.endsWith(".webp")) return "image/webp";
         return "image/webp";
       },
-      href: () => settingsStore.get.icon || "https://www.dyagnosys.com/logo.webp",
+      href: () =>
+        settingsStore.get.icon || "https://www.dyagnosys.com/logo.webp",
     },
   ],
 });

@@ -1,5 +1,5 @@
-import * as path from "path";
-import * as fs from "fs";
+import * as path from "node:path";
+import * as fs from "node:fs";
 import type { IAuthSignupResponseBody, IAuthUser } from "@logchimp/types";
 import { request, test as baseTest } from "@playwright/test";
 

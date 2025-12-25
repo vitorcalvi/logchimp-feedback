@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/correctness/noUnknownFunction: <explanation> */
+/** biome-ignore-all lint/correctness/noUnknownFunction: Tailwind CSS functions */
 @import "tailwindcss";
 
 :root {

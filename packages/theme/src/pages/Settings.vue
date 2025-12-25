@@ -128,7 +128,6 @@ async function updateSettings() {
     name.value = response.data.user.name;
     updateUserButtonLoading.value = false;
     // TODO: Add TS types
-    // biome-ignore lint: Add TS types
   } catch (error: any) {
     updateUserButtonLoading.value = false;
 

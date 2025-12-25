@@ -10,7 +10,8 @@ exports.up = (knex) => {
     .then(() => {
       logger.info({
         code: "DATABASE_MIGRATIONS",
-        message: "Adding columns: adminNotificationEmail, notifyOnNewPost in settings",
+        message:
+          "Adding columns: adminNotificationEmail, notifyOnNewPost in settings",
       });
     })
     .catch((err) => {
@@ -30,7 +31,8 @@ exports.down = (knex) => {
     .then(() => {
       logger.info({
         code: "DATABASE_MIGRATIONS",
-        message: "Dropping columns: adminNotificationEmail, notifyOnNewPost in settings",
+        message:
+          "Dropping columns: adminNotificationEmail, notifyOnNewPost in settings",
       });
     })
     .catch((err) => {

@@ -252,7 +252,7 @@ describe("GET /boards/:url", () => {
 
   it("should get board by url", async () => {
     const board: BoardInsertRecord = await generateBoards({}, true);
-    const { updatedAt, ...boardCheck } = board;
+    const { updatedAt: _updatedAt, ...boardCheck } = board;
 
     const response = await supertest(app).get(`/api/v1/boards/${board.url}`);
 
