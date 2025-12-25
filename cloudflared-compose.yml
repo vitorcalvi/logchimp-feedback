@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate
+    environment:
+      - TUNNEL_NAME=logchimp-tunnel
+      # The credentials will be stored in the tunnel.json file
+    volumes:
+      - cloudflared-config:/etc/cloudflared
+    network_mode: host  # Required for tunnel functionality
+    depends_on:
+      - theme  # Make sure this runs after your Logchimp service
+
+volumes:
+  cloudflared-config:

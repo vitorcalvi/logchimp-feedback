@@ -1,0 +1,109 @@
+name: "LogChimp"
+
+services:
+  cache:
+    image: valkey/valkey:8
+    expose:
+      - "6379"
+    command: [ "valkey-server", "--save", "60", "1", "--loglevel", "warning", "--dir", "/data" ]
+    volumes:
+      - valkey-data:/data
+    networks:
+      - logchimp
+
+  db:
+    image: postgres:12
+    restart: unless-stopped
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_DB: logchimp
+      POSTGRES_USER: logchimp
+      POSTGRES_PASSWORD: your_secure_password_here
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U logchimp -d logchimp" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - logchimp
+
+  api:
+    image: ghcr.io/logchimp/logchimp/api:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      LOGCHIMP_API_HOST: 0.0.0.0
+      LOGCHIMP_IS_SELF_HOSTED: true
+      LOGCHIMP_SECRET_KEY: your_unique_secret_key_here
+      LOGCHIMP_MACHINE_SIGNATURE: your_machine_signature_here
+      # IMPORTANT: This must be the FRONTEND URL (where users access the app)
+      # This controls CORS - the API allows requests from this origin
+      LOGCHIMP_WEB_URL: https://feedback.dyagnosys.com
+
+      # Database
+      LOGCHIMP_DB_HOST: db
+      LOGCHIMP_DB_DATABASE: logchimp
+      LOGCHIMP_DB_PORT: 5432
+      LOGCHIMP_DB_USER: logchimp
+      LOGCHIMP_DB_PASSWORD: your_secure_password_here
+      LOGCHIMP_DB_SSL: false
+
+      # Cache
+      LOGCHIMP_VALKEY_URL: cache:6379
+
+      # Mail
+      LOGCHIMP_MAIL_HOST:
+      LOGCHIMP_MAIL_USER:
+      LOGCHIMP_MAIL_PASSWORD:
+      LOGCHIMP_MAIL_PORT:
+    expose:
+      - "8080"
+    networks:
+      - logchimp
+
+  theme:
+    image: ghcr.io/logchimp/logchimp/theme:latest
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      # Update this to your Cloudflare tunnel domain for API
+      VITE_API_URL: https://api.dyagnosys.com
+      VITE_IS_SELF_HOSTED: true
+    expose:
+      - "3002"
+    networks:
+      - logchimp
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    depends_on:
+      - api
+      - theme
+    command: tunnel run
+    environment:
+      # Get your tunnel token from Cloudflare Zero Trust Dashboard
+      # https://one.dash.cloudflare.com/ -> Networks -> Tunnels -> Create Tunnel
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - logchimp
+
+networks:
+  logchimp:
+    driver: bridge
+
+volumes:
+  valkey-data:
+  postgres:

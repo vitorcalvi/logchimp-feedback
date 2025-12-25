@@ -1,0 +1,71 @@
+name: "LogChimp-Business"
+
+services:
+  cache:
+    image: valkey/valkey:8
+    expose:
+      - "6379"
+    command: [ "valkey-server", "--save", "60", "1", "--loglevel", "warning", "--dir", "/data" ]
+    volumes:
+      - valkey-data:/data
+    networks:
+      - logchimp
+
+  api:
+    image: ghcr.io/logchimp/logchimp/api:latest
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      LOGCHIMP_API_HOST: 100.95.28.30
+      LOGCHIMP_IS_SELF_HOSTED: true
+      LOGCHIMP_SECRET_KEY: your_unique_secret_key_here_must_be_at_least_32_characters_long
+      LOGCHIMP_MACHINE_SIGNATURE: your_machine_signature_here
+      LOGCHIMP_WEB_URL: http://100.95.28.30:8080
+
+      # Database - Using your Neon database
+      LOGCHIMP_DB_CLIENT: pg
+      LOGCHIMP_DB_HOST: ep-withered-glitter-a4luealm-pooler.us-east-1.aws.neon.tech
+      LOGCHIMP_DB_PORT: 5432
+      LOGCHIMP_DB_DATABASE: neondb
+      LOGCHIMP_DB_USER: neondb_owner
+      LOGCHIMP_DB_PASSWORD: npg_b8fs1vGrAkPI
+      LOGCHIMP_DB_SSL: true
+      LOGCHIMP_DB_SSL__REJECT_UNAUTHORIZED: false
+
+      # Cache
+      LOGCHIMP_VALKEY_URL: cache:6379
+
+      # Mail
+      LOGCHIMP_MAIL_HOST: 
+      LOGCHIMP_MAIL_USER: 
+      LOGCHIMP_MAIL_PASSWORD: 
+      LOGCHIMP_MAIL_PORT: 
+    ports:
+      - "8080:8080"
+    networks:
+      - logchimp
+    depends_on:
+      - cache
+
+  theme:
+    image: ghcr.io/logchimp/logchimp/theme:latest
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      VITE_API_URL: http://100.95.28.30:8080
+      VITE_IS_SELF_HOSTED: true
+    ports:
+      - "3002:3002"
+    networks:
+      - logchimp
+
+networks:
+  logchimp:
+    driver: bridge
+
+volumes:
+  valkey-data:

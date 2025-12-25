@@ -1,0 +1,7 @@
+tunnel: logchimp-tunnel
+credentials-file: /etc/cloudflared/logchimp-tunnel.json
+
+ingress:
+  - hostname: feedback.dyagnosys.com
+    service: http://100.95.28.30:3002
+  - service: http_status:404

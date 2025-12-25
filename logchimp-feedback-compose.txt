@@ -1,0 +1,92 @@
+name: "LogChimp-Feedback"
+
+services:
+  cache:
+    image: valkey/valkey:8
+    expose:
+      - "6379"
+    command: [ "valkey-server", "--save", "60", "1", "--loglevel", "warning", "--dir", "/data" ]
+    volumes:
+      - valkey-data:/data
+    networks:
+      - logchimp
+
+  db:
+    image: postgres:12
+    restart: unless-stopped
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_DB: logchimp
+      POSTGRES_USER: logchimp
+      POSTGRES_PASSWORD: secure_logchimp_password_here
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U logchimp -d logchimp" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - logchimp
+
+  api:
+    image: ghcr.io/logchimp/logchimp/api:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      LOGCHIMP_API_HOST: 100.95.28.30
+      LOGCHIMP_IS_SELF_HOSTED: true
+      LOGCHIMP_SECRET_KEY: your_unique_logchimp_secret_key_here_must_be_at_least_32_characters_long
+      LOGCHIMP_MACHINE_SIGNATURE: your_logchimp_machine_signature_here
+      LOGCHIMP_WEB_URL: http://100.95.28.30:8080
+
+      # Database - Using internal Logchimp database
+      LOGCHIMP_DB_HOST: db
+      LOGCHIMP_DB_DATABASE: logchimp
+      LOGCHIMP_DB_PORT: 5432
+      LOGCHIMP_DB_USER: logchimp
+      LOGCHIMP_DB_PASSWORD: secure_logchimp_password_here
+      LOGCHIMP_DB_SSL: false
+
+      # Cache
+      LOGCHIMP_VALKEY_URL: cache:6379
+
+      # Mail
+      LOGCHIMP_MAIL_HOST: 
+      LOGCHIMP_MAIL_USER: 
+      LOGCHIMP_MAIL_PASSWORD: 
+      LOGCHIMP_MAIL_PORT: 
+    ports:
+      - "8080:8080"
+    networks:
+      - logchimp
+
+  theme:
+    image: ghcr.io/logchimp/logchimp/theme:latest
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      VITE_API_URL: http://100.95.28.30:8080
+      VITE_IS_SELF_HOSTED: true
+    ports:
+      - "3002:3002"
+    networks:
+      - logchimp
+
+networks:
+  logchimp:
+    driver: bridge
+
+volumes:
+  valkey-data:
+  postgres:
