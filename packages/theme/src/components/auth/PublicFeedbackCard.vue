@@ -96,7 +96,7 @@ async function loadBoards() {
   try {
     const response = await getPublicBoards();
     boards.value = response.data.boards || [];
-    if (boards.value.length > 0) {
+    if (boards.value.length > 0 && boards.value[0]) {
       selectedBoard.value = boards.value[0].boardId;
     }
   } catch (error) {

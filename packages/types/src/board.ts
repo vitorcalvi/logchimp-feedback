@@ -18,9 +18,9 @@ export interface IBoardPrivate extends IBoardDetail {
 }
 
 export interface IGetBoardsRequestQuery {
-  page: string;
+  page?: string;
   limit?: string;
-  created: ApiSortType;
+  created?: ApiSortType;
 }
 
 export interface IGetBoardsResponseBody {

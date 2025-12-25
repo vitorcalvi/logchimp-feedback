@@ -26,7 +26,6 @@ import type { IPost } from "@logchimp/types";
 import { isSiteSetup } from "../modules/site";
 import { getPosts } from "../modules/posts";
 import { useSettingStore } from "../store/settings";
-import { useUserStore } from "../store/user";
 
 // components
 import InfiniteScroll, {
@@ -38,7 +37,6 @@ import PublicFeedbackCard from "../components/auth/PublicFeedbackCard.vue";
 import TopPublicBoardsList from "../ee/components/TopPublicBoardsList.vue";
 
 const settingsStore = useSettingStore();
-const userStore = useUserStore();
 
 const posts = ref<IPost[]>([]);
 const page = ref<number>(1);
