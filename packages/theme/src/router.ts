@@ -228,6 +228,11 @@ const routes = [
     component: () => import("./pages/passwordReset/Confirm.vue"),
   },
   {
+    path: "/feedback/submit",
+    name: "Magic link feedback",
+    component: () => import("./pages/feedback/Submit.vue"),
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "Page not found",
     component: () => import("./pages/PageNotFound.vue"),

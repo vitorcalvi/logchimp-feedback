@@ -93,3 +93,37 @@ export interface IValidateEmailVerificationTokenResponseBody {
     success: boolean;
   };
 }
+
+// Magic Link Types
+export type TMagicLink = {
+  id: string;
+  email: string;
+  boardId: string;
+  token: string;
+  userId: string | null;
+  used: boolean;
+  expiresAt: Date;
+  createdAt: Date;
+};
+
+export interface IMagicLinkRequestBody {
+  email: string;
+  boardId: string;
+}
+
+export interface IMagicLinkRequestResponseBody {
+  success: boolean;
+  message: string;
+  __token?: TMagicLink;
+}
+
+export interface IMagicLinkValidateRequestBody {
+  token: string;
+}
+
+export interface IMagicLinkValidateResponseBody {
+  valid: boolean;
+  boardId: string;
+  email: string;
+  sessionToken: string;
+}

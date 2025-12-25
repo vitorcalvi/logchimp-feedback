@@ -30,3 +30,16 @@ export interface IVerifyEmailJwtPayload {
   email: string;
   type: "emailVerification";
 }
+
+export interface IMagicLinkJwtPayload {
+  email: string;
+  boardId: string;
+  type: "magicLink";
+}
+
+export interface IMagicLinkSessionJwtPayload {
+  email: string;
+  boardId: string;
+  magicLinkId: string;
+  type: "magicLinkSession";
+}

@@ -81,7 +81,17 @@ export async function filterPost(
 
       try {
         const board = await getBoardById(boardId);
-        const voters = await getVotes(postId, userId);
+
+        // Get view_voters setting for this board
+        const boardSettings = await database
+          .select("view_voters")
+          .from("boards")
+          .where({ boardId })
+          .first();
+
+        const voters = await getVotes(postId, userId, {
+          viewVoters: boardSettings?.view_voters,
+        });
         const roadmap = await database
           .select("id", "name", "url", "color")
           .from("roadmaps")

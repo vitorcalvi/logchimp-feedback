@@ -1,20 +1,15 @@
 <template>
 	<div class="onboarding onboarding-content">
 		<div class="onboarding-header">
-			<h2 class="onboarding-heading">Welcome to <span>LogChimp</span>!</h2>
+			<h2 class="onboarding-heading">Welcome to <span>Dyagnosys Feedback</span>!</h2>
 			<p class="onboarding-label">
-				Let’s setup your LogChimp site to track user feedback for building
+				Let's setup your feedback site to track user feedback for building
 				better products.
 			</p>
 		</div>
 		<Button type="primary" class="welcome-button" href="/setup/create-account">
 			Create an account
 		</Button>
-		<img
-			class="welcome-image"
-			src="https://cdn.logchimp.codecarrot.net/logchimp-home-preview.png"
-			alt="LogChimp homepage preview"
-		/>
 	</div>
 </template>
 
@@ -44,11 +39,6 @@ defineOptions({
 </script>
 
 <style lang='sass'>
-.welcome-image
-	width: 100%
-	border-radius: var(--border-radius-default)
-	border: 1px solid var(--color-gray-90)
-
 .welcome-button
 	margin-bottom: 3rem
 </style>

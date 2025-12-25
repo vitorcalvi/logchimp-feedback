@@ -34,15 +34,17 @@ export async function postBySlug(
       })
       .first();
 
-    const voters = await getVotes(post.postId, userId);
-
     const board = await database
-      .select("boardId", "name", "url", "color", "createdAt")
+      .select("boardId", "name", "url", "color", "view_voters", "createdAt")
       .from("boards")
       .where({
         boardId: post.boardId,
       })
       .first();
+
+    const voters = await getVotes(post.postId, userId, {
+      viewVoters: board?.view_voters,
+    });
 
     const roadmap = await database
       .select("id", "name", "url", "color")

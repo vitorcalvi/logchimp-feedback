@@ -106,11 +106,11 @@ useHead({
   meta: [
     {
       name: "generator",
-      content: () => `LogChimp v${logchimpVersion.value}`,
+      content: () => `Dyagnosys Feedback v${logchimpVersion.value}`,
     },
     {
       name: "description",
-      content: () => `${settingsStore.get.description}. Powered By LogChimp.`,
+      content: () => settingsStore.get.description,
     },
     {
       name: "robots",
@@ -136,7 +136,7 @@ useHead({
     },
     {
       name: "og:description",
-      content: () => `${settingsStore.get.description}. Powered By LogChimp.`,
+      content: () => settingsStore.get.description,
     },
 
     {
@@ -152,13 +152,14 @@ useHead({
     {
       rel: "icon",
       type: () => {
-        const icon = settingsStore.get.icon || "/logchimp.svg";
+        const icon = settingsStore.get.icon || "/dyagnosys-logo.webp";
         if (icon.endsWith(".svg")) return "image/svg+xml";
         if (icon.endsWith(".png")) return "image/png";
         if (icon.endsWith(".ico")) return "image/x-icon";
-        return "image/svg+xml";
+        if (icon.endsWith(".webp")) return "image/webp";
+        return "image/webp";
       },
-      href: () => settingsStore.get.icon || "/logchimp.svg",
+      href: () => settingsStore.get.icon || "/dyagnosys-logo.webp",
     },
   ],
 });

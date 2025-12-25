@@ -1,23 +1,16 @@
 <template>
   <card>
     <template #title>
-			Setup your LogChimp site
+			Setup your feedback site
     </template>
     <template #label>
-			Complete your LogChimp site setup to access dashboard.
+			Complete your site setup to access the dashboard.
     </template>
 
     <div :class="$style.cta">
       <Button type="primary" href="/setup/welcome">
         Create owner account
       </Button>
-    </div>
-
-    <div :class="$style.image">
-      <img
-        src="https://cdn.logchimp.codecarrot.net/dashboard-loading-skeleton.png"
-        alt="Dashboard loading skeleton"
-      >
     </div>
   </card>
 </template>

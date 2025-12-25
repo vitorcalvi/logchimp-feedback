@@ -9,6 +9,9 @@ import type {
   ISetPasswordResponseBody,
   IValidateEmailVerificationTokenResponseBody,
   TAuthSignupRequestBody,
+  IMagicLinkRequestBody,
+  IMagicLinkRequestResponseBody,
+  IMagicLinkValidateResponseBody,
 } from "@logchimp/types";
 
 import { VITE_API_URL } from "../constants";
@@ -125,6 +128,60 @@ export const setNewPassword = async ({
     data: {
       token,
       password,
+    },
+  });
+};
+
+/**
+ * Request magic link for feedback submission
+ * @param {object} data
+ * @param {string} data.email user email address
+ * @param {string} data.boardId target board ID
+ * @returns {Promise<AxiosResponse<IMagicLinkRequestResponseBody>>} response
+ */
+export const requestMagicLink = async (
+  data: IMagicLinkRequestBody,
+): Promise<AxiosResponse<IMagicLinkRequestResponseBody>> => {
+  return await axios({
+    method: "POST",
+    url: `${VITE_API_URL}/api/v1/auth/magic-link/request`,
+    data,
+  });
+};
+
+/**
+ * Validate magic link token
+ * @param {string} token magic link token
+ * @returns {Promise<AxiosResponse<IMagicLinkValidateResponseBody>>} response
+ */
+export const validateMagicLink = async (
+  token: string,
+): Promise<AxiosResponse<IMagicLinkValidateResponseBody>> => {
+  return await axios({
+    method: "POST",
+    url: `${VITE_API_URL}/api/v1/auth/magic-link/validate`,
+    data: {
+      token,
+    },
+  });
+};
+
+/**
+ * Submit feedback with magic link session token
+ * @param {object} post post data
+ * @param {string} sessionToken magic link session token
+ * @returns {Promise<AxiosResponse>} response
+ */
+export const submitFeedbackWithMagicLink = async (
+  post: { title: string; contentMarkdown: string; boardId: string },
+  sessionToken: string,
+): Promise<AxiosResponse<{ post: unknown }>> => {
+  return await axios({
+    method: "POST",
+    url: `${VITE_API_URL}/api/v1/posts/magic-link`,
+    data: post,
+    headers: {
+      Authorization: `Bearer ${sessionToken}`,
     },
   });
 };
