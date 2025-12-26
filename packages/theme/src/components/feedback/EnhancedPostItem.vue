@@ -6,7 +6,6 @@
         :post-id="postData.postId"
         :votes-count="postData.voters.votesCount"
         :is-voted="isVoted"
-        :show-explanation="showVoteExplanation"
         @update-voters="updateVoters"
       />
     </div>
@@ -16,57 +15,39 @@
       <!-- Header with title and badges -->
       <div class="post-header">
         <router-link
-          data-test="post-link"
           :to="`${dashboardUrl}/posts/${postData.slug}`"
           class="post-title-link"
         >
-          <h3
-            data-testid="title"
-            class="post-title"
-          >
+          <h3 class="post-title">
             {{ postData.title }}
           </h3>
         </router-link>
         
         <!-- Badges section -->
         <div class="badges-container">
-          <!-- Status badge -->
-          <status-badge
-            :variant="getStatusVariant()"
-            size="sm"
-          />
-          
-          <!-- Priority badge -->
-          <priority-badge
-            v-if="showPriority"
-            :priority="getPriority()"
-            size="sm"
-          />
-          
-          <!-- Roadmap badge -->
-          <div
-            v-if="postData.roadmap?.id"
-            class="roadmap-badge"
-            :style="{ color: `#${postData.roadmap.color}` }"
-          >
-            <roadmap-icon class="w-3 h-3" />
-            {{ postData.roadmap.name }}
-          </div>
+          <status-badge :variant="getStatusVariant()" />
+          <priority-badge :priority="getPriority()" />
         </div>
       </div>
       
       <!-- Description -->
-      <p
-        v-if="postData.contentMarkdown"
-        data-test="post-description"
-        class="post-description"
-      >
+      <p v-if="postData.contentMarkdown" class="post-description">
         {{ useTrim(postData.contentMarkdown, descriptionLimit) }}
       </p>
       
+      <!-- Image attachment -->
+      <div v-if="postData.image" class="card-image-container">
+        <div class="expand-badge">Image Attached</div>
+        <img
+          :src="postData.image"
+          class="card-image"
+          alt="Attachment"
+          @click="openImage(postData.image)"
+        >
+      </div>
+      
       <!-- Post metadata -->
       <div class="post-meta">
-        <!-- Author info -->
         <div class="author-info">
           <avatar
             :src="postData.author.avatar || undefined"
@@ -76,10 +57,8 @@
           <span class="author-name">{{ postAuthorName }}</span>
         </div>
         
-        <!-- Divider -->
         <div class="meta-divider"></div>
         
-        <!-- Time -->
         <time
           :title="dayjs(postData.createdAt).format('dddd, DD MMMM YYYY hh:mm')"
           class="post-time"
@@ -87,33 +66,11 @@
           {{ dayjs(postData.createdAt).fromNow() }}
         </time>
         
-        <!-- Board badge -->
-        <board-badge
-          v-if="postData.board?.boardId && showBoard"
-          class="meta-board-badge"
-          :show-board="showBoard"
-          :name="postData.board.name"
-          :color="postData.board.color"
-          :url="postData.board.url"
-        />
-        
-        <!-- More options -->
         <post-view-more-options
           v-if="postAuthor"
           :post="postData"
           class="meta-options"
         />
-      </div>
-      
-      <!-- Tags or category indicators -->
-      <div v-if="showTags && hasTags" class="post-tags">
-        <div
-          v-for="tag in getTags()"
-          :key="tag"
-          class="post-tag"
-        >
-          #{{ tag }}
-        </div>
       </div>
     </div>
   </div>
@@ -131,28 +88,18 @@ import { useTrim } from "../../hooks";
 import EnhancedVote from "./EnhancedVote.vue";
 import StatusBadge from "./StatusBadge.vue";
 import PriorityBadge from "./PriorityBadge.vue";
-import BoardBadge from "../board/BoardBadge.vue";
 import { Avatar } from "../ui/Avatar";
 import PostViewMoreOptions from "../post/PostViewMoreOptions.vue";
-import { Roadmap as RoadmapIcon } from "lucide-vue";
 
 interface Props {
   post: IPost;
   dashboard?: boolean;
-  showBoard?: boolean;
-  showPriority?: boolean;
-  showTags?: boolean;
   descriptionLimit?: number;
-  showVoteExplanation?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   dashboard: false,
-  showBoard: true,
-  showPriority: false,
-  showTags: false,
-  descriptionLimit: 150,
-  showVoteExplanation: false
+  descriptionLimit: 150
 });
 
 const postData = ref(props.post);
@@ -167,17 +114,12 @@ const isVoted = computed<boolean>(() =>
 const postAuthorName = computed(() => postData.value.author.name || postData.value.author.username);
 
 const postAuthor = computed(() => {
-  const checkPermission = true; // Simplified for now
+  const checkPermission = true;
   const authorId = postData.value.author.userId;
-  const getUserId = "current-user-id"; // Simplified for now
+  const getUserId = "current-user-id";
   
   if (!checkPermission && getUserId !== authorId) return false;
   return true;
-});
-
-const hasTags = computed(() => {
-  // This would depend on your post data structure
-  return false; // Placeholder
 });
 
 function updateVoters(voters: IPostVote) {
@@ -186,7 +128,6 @@ function updateVoters(voters: IPostVote) {
 }
 
 function getStatusVariant() {
-  // Determine status from post data or content
   const title = postData.value.title.toLowerCase();
   const content = postData.value.contentMarkdown?.toLowerCase() || '';
   
@@ -207,7 +148,6 @@ function getStatusVariant() {
 }
 
 function getPriority() {
-  // Determine priority from vote count and other factors
   const votes = postData.value.voters.votesCount;
   
   if (votes >= 50) return 'critical';
@@ -216,110 +156,163 @@ function getPriority() {
   return 'low';
 }
 
-function getTags() {
-  // Extract tags from post content or metadata
-  return []; // Placeholder
+function openImage(src: string) {
+  const w = window.open("");
+  w?.document.write(`<img src="${src}" style="max-width:100%">`);
 }
 </script>
 
 <style scoped>
 .enhanced-post-item {
-  @apply flex items-start gap-4 p-6 mb-6 last:mb-0;
-  @apply bg-white rounded-xl border border-gray-200;
-  @apply hover:shadow-lg hover:border-gray-300 transition-all duration-300;
-  background: linear-gradient(145deg, #ffffff, #fafafa);
+  display: flex;
+  gap: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.enhanced-post-item:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: #bfdbfe;
 }
 
 .vote-section {
-  @apply flex-shrink-0;
+  flex-shrink: 0;
 }
 
 .content-section {
-  @apply flex-1 min-w-0;
+  flex: 1;
+  min-width: 0;
 }
 
 .post-header {
-  @apply mb-3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .post-title-link {
-  @apply no-underline;
+  text-decoration: none;
 }
 
 .post-title {
-  @apply text-xl font-semibold text-gray-900 mb-2;
-  @apply hover:text-blue-600 transition-colors duration-200;
-  line-height: 1.3;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.post-title:hover {
+  color: var(--primary-blue);
 }
 
 .badges-container {
-  @apply flex flex-wrap gap-2;
-}
-
-.roadmap-badge {
-  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full;
-  @apply bg-gray-100 text-gray-700 text-xs font-medium;
+  display: flex;
+  gap: 8px;
 }
 
 .post-description {
-  @apply text-gray-600 leading-relaxed mb-4;
+  color: #4b5563;
+  font-size: 0.95rem;
   line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.card-image-container {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+  border: 1px solid var(--border-light);
+  position: relative;
+  background: #f3f4f6;
+}
+
+.card-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.card-image:hover {
+  transform: scale(1.02);
+}
+
+.expand-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
 }
 
 .post-meta {
-  @apply flex items-center gap-3 text-sm text-gray-500;
-  @apply flex-wrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
 }
 
 .author-info {
-  @apply flex items-center gap-2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .author-name {
-  @apply font-medium text-gray-700;
+  font-weight: 500;
+  color: var(--text-main);
 }
 
 .meta-divider {
-  @apply w-px h-4 bg-gray-300;
+  width: 1px;
+  height: 16px;
+  background: var(--border-light);
 }
 
 .post-time {
-  @apply text-gray-500;
-}
-
-.meta-board-badge {
-  @apply ml-auto;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
 }
 
 .meta-options {
-  @apply ml-auto;
+  margin-left: auto;
 }
 
-.post-tags {
-  @apply flex flex-wrap gap-2 mt-3;
-}
-
-.post-tag {
-  @apply px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full;
-  @apply hover:bg-gray-200 transition-colors duration-200;
-}
-
-/* Responsive design */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .enhanced-post-item {
-    @apply p-4;
+    padding: 16px;
+    flex-direction: column;
+  }
+  
+  .post-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   .badges-container {
-    @apply gap-1;
+    width: 100%;
   }
   
-  .post-meta {
-    @apply gap-2 text-xs;
-  }
-  
-  .author-info {
-    @apply gap-1;
+  .card-image {
+    height: 140px;
   }
 }
 </style>
