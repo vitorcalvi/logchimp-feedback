@@ -22,6 +22,7 @@ interface IPostInfo {
   updatedAt: Date;
   contentMarkdown: string | null;
   createdAt: Date;
+  screenshots?: string[];
 }
 
 export interface IFilterPostRequestBody {
@@ -49,6 +50,7 @@ export interface ICreatePostRequestBody {
   contentMarkdown?: string | null;
   boardId?: string;
   roadmapId?: string;
+  screenshots?: string[];
 }
 
 export interface ICreatePostResponseBody {

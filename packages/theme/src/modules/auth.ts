@@ -173,7 +173,12 @@ export const validateMagicLink = async (
  * @returns {Promise<AxiosResponse>} response
  */
 export const submitFeedbackWithMagicLink = async (
-  post: { title: string; contentMarkdown: string; boardId: string },
+  post: {
+    title: string;
+    contentMarkdown: string;
+    boardId: string;
+    screenshots?: string[];
+  },
   sessionToken: string,
 ): Promise<AxiosResponse<{ post: unknown }>> => {
   return await axios({

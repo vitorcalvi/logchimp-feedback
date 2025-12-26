@@ -52,6 +52,37 @@
           name="Post description"
           placeholder="What would you use it for?"
         />
+
+        <!-- Screenshot Upload -->
+        <div class="screenshot-section">
+          <label class="screenshot-label">Screenshots (optional)</label>
+          <div class="screenshot-upload-area" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleDrop">
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              multiple
+              class="hidden-input"
+              @change="handleFileSelect"
+            />
+            <div class="upload-placeholder">
+              <CameraIcon class="upload-icon" />
+              <span>Click or drag images here</span>
+              <span class="upload-hint">Max 5 images, 5MB each</span>
+            </div>
+          </div>
+
+          <!-- Screenshot Previews -->
+          <div v-if="screenshots.length > 0" class="screenshot-previews">
+            <div v-for="(screenshot, index) in screenshots" :key="index" class="screenshot-preview">
+              <img :src="screenshot" alt="Screenshot preview" />
+              <button type="button" class="remove-screenshot" @click="removeScreenshot(index)">
+                <XIcon class="remove-icon" />
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div style="display: flex; justify-content: center;">
           <Button
             type="primary"
@@ -69,7 +100,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { useHead } from "@vueuse/head";
-import { XCircle as ErrorIcon } from "lucide-vue";
+import { XCircle as ErrorIcon, Camera as CameraIcon, X as XIcon } from "lucide-vue";
 
 // modules
 import { router } from "../../router";
@@ -105,6 +136,67 @@ const title = reactive({
 });
 const description = ref("");
 const submitting = ref(false);
+const screenshots = ref<string[]>([]);
+const fileInput = ref<HTMLInputElement | null>(null);
+
+const MAX_SCREENSHOTS = 5;
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+function triggerFileInput() {
+  fileInput.value?.click();
+}
+
+function handleFileSelect(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files) {
+    processFiles(Array.from(target.files));
+  }
+}
+
+function handleDrop(event: DragEvent) {
+  if (event.dataTransfer?.files) {
+    processFiles(Array.from(event.dataTransfer.files));
+  }
+}
+
+async function processFiles(files: File[]) {
+  const remainingSlots = MAX_SCREENSHOTS - screenshots.value.length;
+  const filesToProcess = files.slice(0, remainingSlots);
+
+  for (const file of filesToProcess) {
+    if (!file.type.startsWith("image/")) {
+      continue;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      continue;
+    }
+
+    try {
+      const base64 = await fileToBase64(file);
+      screenshots.value.push(base64);
+    } catch (err) {
+      console.error("Failed to process file:", err);
+    }
+  }
+
+  // Reset file input
+  if (fileInput.value) {
+    fileInput.value.value = "";
+  }
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeScreenshot(index: number) {
+  screenshots.value.splice(index, 1);
+}
 
 function hideTitleError(event: FormFieldErrorType) {
   title.error = event;
@@ -152,6 +244,7 @@ async function submitFeedback() {
         title: title.value,
         contentMarkdown: description.value,
         boardId: boardId.value,
+        screenshots: screenshots.value,
       },
       sessionToken.value,
     );
@@ -194,5 +287,98 @@ defineOptions({
 .feedback-header {
   text-align: center;
   margin-bottom: 1rem;
+}
+
+.screenshot-section {
+  margin-top: 1rem;
+}
+
+.screenshot-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.screenshot-upload-area {
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.screenshot-upload-area:hover {
+  border-color: #484d7c;
+  background-color: #f9fafb;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+}
+
+.upload-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #9ca3af;
+}
+
+.upload-hint {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.screenshot-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.screenshot-preview {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.screenshot-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-screenshot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.remove-icon {
+  width: 12px;
+  height: 12px;
+  color: white;
 }
 </style>

@@ -48,6 +48,7 @@ export async function createWithMagicLink(
   const title = req.body.title || "new post";
   const contentMarkdown = req.body.contentMarkdown;
   const boardId = validUUID(req.body.boardId);
+  const screenshots = req.body.screenshots || [];
 
   // Verify the board matches the magic link's authorized board
   if (boardId !== authorizedBoardId) {
@@ -119,6 +120,7 @@ export async function createWithMagicLink(
         contentMarkdown,
         userId: user.userId,
         boardId,
+        screenshots: JSON.stringify(screenshots),
       })
       .into("posts")
       .returning("*");

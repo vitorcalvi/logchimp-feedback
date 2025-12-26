@@ -10,20 +10,18 @@
       <infinite-scroll :on-infinite="loadMorePosts" :state="state" />
     </main>
     <aside class="flex-1 h-full mb-6 lg:mb-0 grid grid-cols-1 gap-y-4 lg:sticky lg:top-20">
-      <site-setup-card v-if="showSiteSetupCard" />
-      <public-feedback-card v-if="!showSiteSetupCard" />
+      <public-feedback-card />
       <top-public-boards-list />
     </aside>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { useHead } from "@vueuse/head";
 import type { IPost } from "@logchimp/types";
 
 // modules
-import { isSiteSetup } from "../modules/site";
 import { getPosts } from "../modules/posts";
 import { useSettingStore } from "../store/settings";
 
@@ -32,7 +30,6 @@ import InfiniteScroll, {
   type InfiniteScrollStateType,
 } from "../components/ui/InfiniteScroll.vue";
 import PostItem from "../components/post/PostItem.vue";
-import SiteSetupCard from "../components/site/SiteSetupCard.vue";
 import PublicFeedbackCard from "../components/auth/PublicFeedbackCard.vue";
 import TopPublicBoardsList from "../ee/components/TopPublicBoardsList.vue";
 
@@ -40,17 +37,7 @@ const settingsStore = useSettingStore();
 
 const posts = ref<IPost[]>([]);
 const page = ref<number>(1);
-const showSiteSetupCard = ref<boolean>(false);
 const state = ref<InfiniteScrollStateType>();
-
-async function isSetup() {
-  try {
-    const response = await isSiteSetup();
-    showSiteSetupCard.value = !response.data.is_setup;
-  } catch (error) {
-    console.error(error);
-  }
-}
 
 async function loadMorePosts() {
   if (state.value === "LOADING" || state.value === "COMPLETED") return;
@@ -76,8 +63,6 @@ async function loadMorePosts() {
     state.value = "ERROR";
   }
 }
-
-onMounted(() => isSetup());
 
 useHead({
   title: "Home",
