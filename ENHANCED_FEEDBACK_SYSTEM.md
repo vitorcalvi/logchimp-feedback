@@ -200,6 +200,46 @@ import {
 - **Consistent API**: Standardized component interfaces
 - **Extensible**: Easy to add new features
 
+## 🌐 Deployment & URL Configuration
+
+### Correct Access URLs
+For production deployment, use the following Cloudflare tunnel URLs:
+
+**Main Application:**
+- URL: `https://feedback.dyagnosys.com`
+- SSL: ✅ Cloudflare managed
+- CDN: ✅ Global edge caching
+
+**Feedback Submission (Magic Links):**
+- URL: `https://feedback.dyagnosys.com/feedback/submit?token={magic_link_token}`
+- API: `https://api.dyagnosys.com`
+
+**Direct Server Access (Development/Testing):**
+- Theme: `http://100.95.28.30:3002`
+- API: `http://100.95.28.30:8080`
+
+### Cloudflare Tunnel Configuration
+The deployment uses Cloudflare Tunnel for secure, SSL-enabled access:
+
+```yaml
+# Tunnel routes
+feedback.dyagnosys.com → http://theme:3002
+api.dyagnosys.com → http://api:8080
+```
+
+### Deployment Status
+- ✅ **API Server**: Running on port 8080
+- ✅ **Theme/Frontend**: Running on port 3002  
+- ✅ **Database**: PostgreSQL healthy
+- ✅ **Cache**: Redis operational
+- ✅ **Cloudflare Tunnel**: Active and routing correctly
+- ✅ **SSL Certificates**: Auto-managed by Cloudflare
+
+### Troubleshooting
+- **URL Not Working**: Ensure you're using `feedback.dyagnosys.com` not IP-based domains
+- **SSL Issues**: Cloudflare handles SSL automatically - no manual certificate management needed
+- **Routing Problems**: Check Cloudflare tunnel logs for connectivity issues
+
 ## 🔮 Future Enhancements
 
 ### Planned Features
