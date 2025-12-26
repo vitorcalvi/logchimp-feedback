@@ -11,7 +11,8 @@ const app = express();
 app.disable("x-powered-by");
 
 // contains key-value pairs of data submitted in the request body
-app.use(express.json());
+// Increase limit for base64 image uploads (screenshots)
+app.use(express.json({ limit: "50mb" }));
 
 // enable all CORS requests
 app.use(cors());
